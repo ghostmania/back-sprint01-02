@@ -11,7 +11,7 @@ export function deletePostHandler(req: Request, res: Response) {
   if (index === -1) {
     res
       .status(HttpStatus.NotFound)
-      .send(createErrorMessages([{ field: 'id', message: 'Blog not found' }]));
+      .send(createErrorMessages([{ field: 'id', message: 'Post not found' }]));
     return;
   }
 

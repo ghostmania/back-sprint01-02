@@ -18,7 +18,13 @@ export function createPostHandler(req: Request, res: Response) {
 
   const blog = db2.blogs.find((d) => d.id === req.body.blogId);
   if (!blog) {
-    res.status(HttpStatus.BadRequest).send(createErrorMessages(errors));
+    res
+      .status(HttpStatus.BadRequest)
+      .send(
+        createErrorMessages([
+          { field: 'blogId', message: 'Blog for post does not exist' },
+        ]),
+      );
     return;
   }
 

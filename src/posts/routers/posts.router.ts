@@ -5,9 +5,9 @@ import { updatePostHandler } from './handlers/update-post.handler';
 import { createPostHandler } from './handlers/create-post.handler';
 import { deletePostHandler } from './handlers/delete-post.handler';
 
-export const blogsRouter = Router({});
+export const postsRouter = Router({});
 
-blogsRouter
+postsRouter
   .get('', getPostsListHandler)
 
   .get('/:id', getPostByIdHandler)
