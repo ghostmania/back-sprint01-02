@@ -58,7 +58,7 @@ describe('Auth test', () => {
         .post('/blogs')
         .set('Authorization', invalidAuthHeader)
         .send({
-          name: 'Unauthorized create blog',
+          name: 'Unauth blog',
           description: 'Unauthorized create description',
           websiteUrl: 'https://unauthorized-create.dev',
         })
@@ -68,7 +68,7 @@ describe('Auth test', () => {
         .put(`/blogs/${createdBlogResponse.body.id}`)
         .set('Authorization', invalidAuthHeader)
         .send({
-          name: 'Unauthorized update blog',
+          name: 'Unauth update',
           description: 'Unauthorized update description',
           websiteUrl: 'https://unauthorized-update.dev',
         })
@@ -191,7 +191,7 @@ describe('Auth test', () => {
         .post('/blogs')
         .set('Authorization', validAuthHeader)
         .send({
-          name: 'Updated homework blog',
+          name: 'Updated blog',
           description: 'Another blog used for post update',
           websiteUrl: 'https://updated-homework-blog.dev',
         })
