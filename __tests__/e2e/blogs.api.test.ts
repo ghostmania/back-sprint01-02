@@ -71,6 +71,55 @@ describe('Blogs API', () => {
     );
   });
 
+  it('should return 400 when websiteUrl does not match the required https pattern; POST /blogs', async () => {
+    const response = await request(app)
+      .post('/blogs')
+      .set('Authorization', adminAuthHeader)
+      .send({
+        ...validBlogInput,
+        websiteUrl: 'http://code-notes.dev/invalid-path/test?x=1',
+      })
+      .expect(HttpStatus.BadRequest);
+
+    expect(response.body.errorsMessages).toEqual(
+      expect.arrayContaining([
+        {
+          field: 'websiteUrl',
+          message: expect.any(String),
+        },
+      ]),
+    );
+  });
+
+  it('should return 400 when blog fields exceed validation limits; POST /blogs', async () => {
+    const response = await request(app)
+      .post('/blogs')
+      .set('Authorization', adminAuthHeader)
+      .send({
+        name: 'a'.repeat(16),
+        description: 'b'.repeat(501),
+        websiteUrl: `https://${'c'.repeat(95)}`,
+      })
+      .expect(HttpStatus.BadRequest);
+
+    expect(response.body.errorsMessages).toEqual(
+      expect.arrayContaining([
+        {
+          field: 'name',
+          message: expect.any(String),
+        },
+        {
+          field: 'description',
+          message: expect.any(String),
+        },
+        {
+          field: 'websiteUrl',
+          message: expect.any(String),
+        },
+      ]),
+    );
+  });
+
   it('should return all blogs; GET /blogs', async () => {
     const firstBlog = await createBlog();
     const secondResponse = await request(app)
@@ -116,7 +165,7 @@ describe('Blogs API', () => {
   it('should update blog with valid data; PUT /blogs/:id', async () => {
     const createdBlog = await createBlog();
     const updatedBlog = {
-      name: 'Refined Code Notes',
+      name: 'Refined Code',
       description: 'Updated backend engineering articles',
       websiteUrl: 'https://refined-code.dev',
     };
@@ -160,6 +209,29 @@ describe('Blogs API', () => {
           field: 'description',
           message: expect.any(String),
         },
+        {
+          field: 'websiteUrl',
+          message: expect.any(String),
+        },
+      ]),
+    );
+  });
+
+  it('should return 400 when websiteUrl does not match the required https pattern; PUT /blogs/:id', async () => {
+    const createdBlog = await createBlog();
+
+    const response = await request(app)
+      .put(`/blogs/${createdBlog.id}`)
+      .set('Authorization', adminAuthHeader)
+      .send({
+        name: 'Refined Code',
+        description: 'Updated backend engineering articles',
+        websiteUrl: 'https://refined-code.dev/path/with.dot',
+      })
+      .expect(HttpStatus.BadRequest);
+
+    expect(response.body.errorsMessages).toEqual(
+      expect.arrayContaining([
         {
           field: 'websiteUrl',
           message: expect.any(String),

@@ -1,7 +1,6 @@
 import { HttpStatus } from '../../../core/types/http-statuses';
 import { createErrorMessages } from '../../../core/utils/error.utils';
 import { db } from '../../../db/blogs.db';
-import { blogInputDtoValidation } from '../../validation/blogInputDtoValidation';
 import { Request, Response } from 'express';
 
 export function updateBlogHandler(req: Request, res: Response) {
@@ -15,15 +14,6 @@ export function updateBlogHandler(req: Request, res: Response) {
     return;
   }
   const driver = db.blogs[index];
-
-  const errors = blogInputDtoValidation({
-    ...req.body,
-  });
-
-  if (errors.length > 0) {
-    res.status(HttpStatus.BadRequest).send(createErrorMessages(errors));
-    return;
-  }
 
   driver.name = req.body.name;
   driver.description = req.body.description;

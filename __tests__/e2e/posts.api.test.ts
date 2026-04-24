@@ -100,6 +100,39 @@ describe('Posts API', () => {
     );
   });
 
+  it('should return 400 for invalid create payload even without admin authorization; POST /posts', async () => {
+    const response = await request(app)
+      .post('/posts')
+      .send({
+        title: '',
+        shortDescription: null,
+        content: false,
+        blogId: null,
+      })
+      .expect(HttpStatus.BadRequest);
+
+    expect(response.body.errorsMessages).toEqual(
+      expect.arrayContaining([
+        {
+          field: 'title',
+          message: expect.any(String),
+        },
+        {
+          field: 'shortDescription',
+          message: expect.any(String),
+        },
+        {
+          field: 'content',
+          message: expect.any(String),
+        },
+        {
+          field: 'blogId',
+          message: expect.any(String),
+        },
+      ]),
+    );
+  });
+
   it('should return 400 when blog does not exist; POST /posts', async () => {
     const response = await request(app)
       .post('/posts')
@@ -238,7 +271,7 @@ describe('Posts API', () => {
       .post('/blogs')
       .set('Authorization', adminAuthHeader)
       .send({
-        name: 'Refined Platform Notes',
+        name: 'Refined Notes',
         description: 'Refined notes about platform engineering',
         websiteUrl: 'https://refined-platform-notes.dev',
       })
@@ -274,6 +307,39 @@ describe('Posts API', () => {
     const response = await request(app)
       .put(`/posts/${createdPost.id}`)
       .set('Authorization', adminAuthHeader)
+      .send({
+        title: '',
+        shortDescription: 123,
+        content: false,
+        blogId: null,
+      })
+      .expect(HttpStatus.BadRequest);
+
+    expect(response.body.errorsMessages).toEqual(
+      expect.arrayContaining([
+        {
+          field: 'title',
+          message: expect.any(String),
+        },
+        {
+          field: 'shortDescription',
+          message: expect.any(String),
+        },
+        {
+          field: 'content',
+          message: expect.any(String),
+        },
+        {
+          field: 'blogId',
+          message: expect.any(String),
+        },
+      ]),
+    );
+  });
+
+  it('should return 400 for invalid update payload before auth and existence checks; PUT /posts/:id', async () => {
+    const response = await request(app)
+      .put('/posts/999')
       .send({
         title: '',
         shortDescription: 123,

@@ -6,6 +6,7 @@ import { createPostHandler } from './handlers/create-post.handler';
 import { deletePostHandler } from './handlers/delete-post.handler';
 import { superAdminGuardMiddleware } from '../../auth/admin.guard-middleware';
 import { DocumentExistGuardMiddleware } from '../middleware/DocumentExistGuardMiddleware';
+import { PostHasValidFIeldsMiddleware } from '../middleware/PostHasValidFieldsMiddleware';
 
 export const postsRouter = Router({});
 
@@ -13,10 +14,16 @@ postsRouter
   .get('', getPostsListHandler)
 
   .get('/:id', getPostByIdHandler)
-  .post('', superAdminGuardMiddleware, createPostHandler)
+  .post(
+    '',
+    PostHasValidFIeldsMiddleware,
+    superAdminGuardMiddleware,
+    createPostHandler,
+  )
 
   .put(
     '/:id',
+    PostHasValidFIeldsMiddleware,
     DocumentExistGuardMiddleware,
     superAdminGuardMiddleware,
     updatePostHandler,

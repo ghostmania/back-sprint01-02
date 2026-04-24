@@ -8,7 +8,7 @@ export const postInputDtoValidation = (
 
   if (
     !data.title ||
-    typeof data.title !== 'string' ||
+    (data.title && typeof data.title !== 'string') ||
     (data.title && data.title.trim().length > 30)
   ) {
     errors.push({ field: 'title', message: 'Invalid post title' });
@@ -16,7 +16,7 @@ export const postInputDtoValidation = (
 
   if (
     !data.shortDescription ||
-    typeof data.shortDescription !== 'string' ||
+    (data.shortDescription && typeof data.shortDescription !== 'string') ||
     (data.shortDescription && data.shortDescription.trim().length > 100)
   ) {
     errors.push({
@@ -26,7 +26,7 @@ export const postInputDtoValidation = (
   }
   if (
     !data.content ||
-    typeof data.content !== 'string' ||
+    (data.content && typeof data.content !== 'string') ||
     (data.content && data.content.trim().length > 1000)
   ) {
     errors.push({ field: 'content', message: 'Invalid post content' });
@@ -34,7 +34,7 @@ export const postInputDtoValidation = (
 
   if (
     !data.blogId ||
-    typeof data.blogId !== 'string' ||
+    (data.blogId && typeof data.blogId !== 'string') ||
     (data.blogId && data.blogId.trim().length < 0)
   ) {
     errors.push({ field: 'blogId', message: 'Invalid post blogId' });

@@ -17,14 +17,14 @@ export function updatePostHandler(req: Request, res: Response) {
   // }
   const post = db.posts[index];
 
-  const errors = postInputDtoValidation({
-    ...req.body,
-  });
+  // const errors = postInputDtoValidation({
+  //   ...req.body,
+  // });
 
-  if (errors.length > 0) {
-    res.status(HttpStatus.BadRequest).send(createErrorMessages(errors));
-    return;
-  }
+  // if (errors.length > 0) {
+  //   res.status(HttpStatus.BadRequest).send(createErrorMessages(errors));
+  //   return;
+  // }
 
   const blog = blogsDb.blogs.find((item) => item.id === req.body.blogId);
   if (!blog) {

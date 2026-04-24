@@ -3,19 +3,10 @@ import { HttpStatus } from '../../../core/types/http-statuses';
 import { createErrorMessages } from '../../../core/utils/error.utils';
 import { db } from '../../../db/posts.db';
 import { db as db2 } from '../../../db/blogs.db';
-import { postInputDtoValidation } from '../../validation/postInputDtoValidation';
 import { Post } from '../../types/post';
 
 export function createPostHandler(req: Request, res: Response) {
-  const errors = postInputDtoValidation(req.body);
-
-  if (errors.length > 0) {
-    res.status(HttpStatus.BadRequest).send(createErrorMessages(errors));
-    return;
-  }
-
   // validate blog exists and get data
-
   const blog = db2.blogs.find((d) => d.id === req.body.blogId);
   if (!blog) {
     res
