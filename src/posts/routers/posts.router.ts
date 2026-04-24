@@ -16,8 +16,8 @@ postsRouter
   .get('/:id', getPostByIdHandler)
   .post(
     '',
-    PostHasValidFIeldsMiddleware,
     superAdminGuardMiddleware,
+    PostHasValidFIeldsMiddleware,
     createPostHandler,
   )
 

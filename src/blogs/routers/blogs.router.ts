@@ -15,8 +15,8 @@ blogsRouter
   .get('/:id', getBlogByIdHandler)
   .post(
     '',
-    BlogHasValidFIeldsMiddleware,
     superAdminGuardMiddleware,
+    BlogHasValidFIeldsMiddleware,
     createBlogHandler,
   )
 
