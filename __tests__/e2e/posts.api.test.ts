@@ -6,6 +6,7 @@ import { setupApp } from '../../src/setup-app';
 describe('Posts API', () => {
   const app = express();
   setupApp(app);
+  const adminAuthHeader = `Basic ${Buffer.from('admin:qwerty').toString('base64')}`;
 
   const validBlogInput = {
     name: 'Platform Notes',
@@ -26,6 +27,7 @@ describe('Posts API', () => {
     const blog = await createBlog();
     const response = await request(app)
       .post('/posts')
+      .set('Authorization', adminAuthHeader)
       .send({
         title: 'First post',
         shortDescription: 'Introductory backend post',
@@ -46,6 +48,7 @@ describe('Posts API', () => {
 
     const response = await request(app)
       .post('/posts')
+      .set('Authorization', adminAuthHeader)
       .send({
         title: 'First post',
         shortDescription: 'Introductory backend post',
@@ -67,6 +70,7 @@ describe('Posts API', () => {
   it('should return 400 when create payload is invalid; POST /posts', async () => {
     const response = await request(app)
       .post('/posts')
+      .set('Authorization', adminAuthHeader)
       .send({
         title: 123,
         shortDescription: null,
@@ -98,6 +102,7 @@ describe('Posts API', () => {
   it('should return 400 when blog does not exist; POST /posts', async () => {
     const response = await request(app)
       .post('/posts')
+      .set('Authorization', adminAuthHeader)
       .send({
         title: 'First post',
         shortDescription: 'Introductory backend post',
@@ -119,6 +124,7 @@ describe('Posts API', () => {
   it('should return 400 when blogId is empty string; POST /posts', async () => {
     const response = await request(app)
       .post('/posts')
+      .set('Authorization', adminAuthHeader)
       .send({
         title: 'First post',
         shortDescription: 'Introductory backend post',
@@ -140,6 +146,7 @@ describe('Posts API', () => {
   it('should return 400 when blogId is null; POST /posts', async () => {
     const response = await request(app)
       .post('/posts')
+      .set('Authorization', adminAuthHeader)
       .send({
         title: 'First post',
         shortDescription: 'Introductory backend post',
@@ -161,6 +168,7 @@ describe('Posts API', () => {
   it('should return 400 when blogId is not a string; POST /posts', async () => {
     const response = await request(app)
       .post('/posts')
+      .set('Authorization', adminAuthHeader)
       .send({
         title: 'First post',
         shortDescription: 'Introductory backend post',
@@ -184,6 +192,7 @@ describe('Posts API', () => {
     const blog = await createBlog();
     const secondResponse = await request(app)
       .post('/posts')
+      .set('Authorization', adminAuthHeader)
       .send({
         title: 'Second post',
         shortDescription: 'Follow-up backend post',
@@ -242,6 +251,7 @@ describe('Posts API', () => {
 
     await request(app)
       .put(`/posts/${createdPost.id}`)
+      .set('Authorization', adminAuthHeader)
       .send(updatedPost)
       .expect(HttpStatus.NoContent);
 
@@ -261,6 +271,7 @@ describe('Posts API', () => {
 
     const response = await request(app)
       .put(`/posts/${createdPost.id}`)
+      .set('Authorization', adminAuthHeader)
       .send({
         title: '',
         shortDescription: 123,
@@ -296,6 +307,7 @@ describe('Posts API', () => {
 
     const response = await request(app)
       .put('/posts/999')
+      .set('Authorization', adminAuthHeader)
       .send({
         title: 'First post',
         shortDescription: 'Introductory backend post',
@@ -319,6 +331,7 @@ describe('Posts API', () => {
 
     await request(app)
       .delete(`/posts/${createdPost.id}`)
+      .set('Authorization', adminAuthHeader)
       .expect(HttpStatus.NoContent);
 
     await request(app)
@@ -333,6 +346,7 @@ describe('Posts API', () => {
   it('should return 404 when trying to delete non-existing post; DELETE /posts/:id', async () => {
     const response = await request(app)
       .delete('/posts/999')
+      .set('Authorization', adminAuthHeader)
       .expect(HttpStatus.NotFound);
 
     expect(response.body).toEqual({
@@ -343,5 +357,42 @@ describe('Posts API', () => {
         },
       ],
     });
+  });
+
+  it('should return 401 when creating post without admin authorization; POST /posts', async () => {
+    const blog = await createBlog();
+
+    await request(app)
+      .post('/posts')
+      .send({
+        title: 'First post',
+        shortDescription: 'Introductory backend post',
+        content: 'A longer text about backend APIs',
+        blogId: blog.id,
+      })
+      .expect(HttpStatus.Unauthorized);
+  });
+
+  it('should return 401 when updating post without admin authorization; PUT /posts/:id', async () => {
+    const createdPost = await createPost();
+    const blog = await createBlog();
+
+    await request(app)
+      .put(`/posts/${createdPost.id}`)
+      .send({
+        title: 'Refined post',
+        shortDescription: 'Updated backend post',
+        content: 'Updated backend API content',
+        blogId: blog.id,
+      })
+      .expect(HttpStatus.Unauthorized);
+  });
+
+  it('should return 401 when deleting post without admin authorization; DELETE /posts/:id', async () => {
+    const createdPost = await createPost();
+
+    await request(app)
+      .delete(`/posts/${createdPost.id}`)
+      .expect(HttpStatus.Unauthorized);
   });
 });

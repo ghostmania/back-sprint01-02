@@ -6,15 +6,21 @@ export const blogInputDtoValidation = (
 ): ValidationError[] => {
   const errors: ValidationError[] = [];
 
-  if (!data.name || typeof data.name !== 'string') {
+  if (!data.name || (data.name && typeof data.name !== 'string')) {
     errors.push({ field: 'name', message: 'Invalid blog name' });
   }
 
-  if (!data.description || typeof data.description !== 'string') {
+  if (
+    !data.description ||
+    (data.description && typeof data.description !== 'string')
+  ) {
     errors.push({ field: 'description', message: 'Invalid blog description' });
   }
 
-  if (!data.websiteUrl || typeof data.websiteUrl !== 'string') {
+  if (
+    !data.websiteUrl ||
+    (data.websiteUrl && typeof data.websiteUrl !== 'string')
+  ) {
     errors.push({ field: 'websiteUrl', message: 'Invalid blog websiteUrl' });
   }
 
