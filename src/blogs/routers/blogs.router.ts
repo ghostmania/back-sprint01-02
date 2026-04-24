@@ -4,6 +4,7 @@ import { getBlogByIdHandler } from './handlers/get-blog-by-id.handler';
 import { createBlogHandler } from './handlers/create-blog.handler';
 import { updateBlogHandler } from './handlers/update-blog.handler';
 import { deleteBlogHandler } from './handlers/delete-blog.handler';
+import { superAdminGuardMiddleware } from '../../auth/admin.guard-middleware';
 
 export const blogsRouter = Router({});
 
@@ -11,8 +12,8 @@ blogsRouter
   .get('', getBlogsListHandler)
 
   .get('/:id', getBlogByIdHandler)
-  .post('', createBlogHandler)
+  .post('', superAdminGuardMiddleware, createBlogHandler)
 
-  .put('/:id', updateBlogHandler)
+  .put('/:id', superAdminGuardMiddleware, updateBlogHandler)
 
-  .delete('/:id', deleteBlogHandler);
+  .delete('/:id', superAdminGuardMiddleware, deleteBlogHandler);

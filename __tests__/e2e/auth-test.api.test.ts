@@ -19,6 +19,7 @@ describe('Auth test', () => {
   const createBlog = async () => {
     const response = await request(app)
       .post('/blogs')
+      .set('Authorization', validAuthHeader)
       .send(validBlogInput)
       .expect(HttpStatus.Created);
 
@@ -46,10 +47,44 @@ describe('Auth test', () => {
   });
 
   describe('Blogs api', () => {
+    it('PUT, POST, DELETE -> "/blogs": should return error if auth credentials is incorrect; status 401;', async () => {
+      const createdBlogResponse = await request(app)
+        .post('/blogs')
+        .set('Authorization', validAuthHeader)
+        .send(validBlogInput)
+        .expect(HttpStatus.Created);
+
+      await request(app)
+        .post('/blogs')
+        .set('Authorization', invalidAuthHeader)
+        .send({
+          name: 'Unauthorized create blog',
+          description: 'Unauthorized create description',
+          websiteUrl: 'https://unauthorized-create.dev',
+        })
+        .expect(HttpStatus.Unauthorized);
+
+      await request(app)
+        .put(`/blogs/${createdBlogResponse.body.id}`)
+        .set('Authorization', invalidAuthHeader)
+        .send({
+          name: 'Unauthorized update blog',
+          description: 'Unauthorized update description',
+          websiteUrl: 'https://unauthorized-update.dev',
+        })
+        .expect(HttpStatus.Unauthorized);
+
+      await request(app)
+        .delete(`/blogs/${createdBlogResponse.body.id}`)
+        .set('Authorization', invalidAuthHeader)
+        .expect(HttpStatus.Unauthorized);
+    });
+
     describe('Blog body validation', () => {
       it('POST -> "/blogs": should return error if passed body is incorrect; status 400;', async () => {
         const response = await request(app)
           .post('/blogs')
+          .set('Authorization', validAuthHeader)
           .send({
             name: '',
             description: 123,
@@ -71,6 +106,7 @@ describe('Auth test', () => {
 
         const response = await request(app)
           .put(`/blogs/${createdBlog.id}`)
+          .set('Authorization', validAuthHeader)
           .send({
             name: '',
             description: 123,
@@ -153,6 +189,7 @@ describe('Auth test', () => {
       const { post } = await createPost();
       const updatedBlog = await request(app)
         .post('/blogs')
+        .set('Authorization', validAuthHeader)
         .send({
           name: 'Updated homework blog',
           description: 'Another blog used for post update',

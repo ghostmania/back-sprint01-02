@@ -6,6 +6,7 @@ import { setupApp } from '../../src/setup-app';
 describe('Blogs API', () => {
   const app = express();
   setupApp(app);
+  const adminAuthHeader = `Basic ${Buffer.from('admin:qwerty').toString('base64')}`;
 
   const validBlogInput = {
     name: 'Code Notes',
@@ -16,6 +17,7 @@ describe('Blogs API', () => {
   const createBlog = async () => {
     const response = await request(app)
       .post('/blogs')
+      .set('Authorization', adminAuthHeader)
       .send(validBlogInput)
       .expect(HttpStatus.Created);
 
@@ -29,6 +31,7 @@ describe('Blogs API', () => {
   it('should create blog with valid data; POST /blogs', async () => {
     const response = await request(app)
       .post('/blogs')
+      .set('Authorization', adminAuthHeader)
       .send(validBlogInput)
       .expect(HttpStatus.Created);
 
@@ -43,6 +46,7 @@ describe('Blogs API', () => {
   it('should return 400 when create payload is invalid; POST /blogs', async () => {
     const response = await request(app)
       .post('/blogs')
+      .set('Authorization', adminAuthHeader)
       .send({
         name: 123,
         description: null,
@@ -71,6 +75,7 @@ describe('Blogs API', () => {
     const firstBlog = await createBlog();
     const secondResponse = await request(app)
       .post('/blogs')
+      .set('Authorization', adminAuthHeader)
       .send({
         name: 'Ops Weekly',
         description: 'DevOps updates and notes',
@@ -118,6 +123,7 @@ describe('Blogs API', () => {
 
     await request(app)
       .put(`/blogs/${createdBlog.id}`)
+      .set('Authorization', adminAuthHeader)
       .send(updatedBlog)
       .expect(HttpStatus.NoContent);
 
@@ -136,6 +142,7 @@ describe('Blogs API', () => {
 
     const response = await request(app)
       .put(`/blogs/${createdBlog.id}`)
+      .set('Authorization', adminAuthHeader)
       .send({
         name: '',
         description: 123,
@@ -164,6 +171,7 @@ describe('Blogs API', () => {
   it('should return 404 when trying to update non-existing blog; PUT /blogs/:id', async () => {
     const response = await request(app)
       .put('/blogs/999')
+      .set('Authorization', adminAuthHeader)
       .send(validBlogInput)
       .expect(HttpStatus.NotFound);
 
@@ -182,6 +190,7 @@ describe('Blogs API', () => {
 
     await request(app)
       .delete(`/blogs/${createdBlog.id}`)
+      .set('Authorization', adminAuthHeader)
       .expect(HttpStatus.NoContent);
 
     await request(app)
@@ -196,6 +205,7 @@ describe('Blogs API', () => {
   it('should return 404 when trying to delete non-existing blog; DELETE /blogs/:id', async () => {
     const response = await request(app)
       .delete('/blogs/999')
+      .set('Authorization', adminAuthHeader)
       .expect(HttpStatus.NotFound);
 
     expect(response.body).toEqual({

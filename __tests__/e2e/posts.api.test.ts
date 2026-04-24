@@ -17,6 +17,7 @@ describe('Posts API', () => {
   const createBlog = async () => {
     const response = await request(app)
       .post('/blogs')
+      .set('Authorization', adminAuthHeader)
       .send(validBlogInput)
       .expect(HttpStatus.Created);
 
@@ -235,6 +236,7 @@ describe('Posts API', () => {
     const createdPost = await createPost();
     const updatedBlog = await request(app)
       .post('/blogs')
+      .set('Authorization', adminAuthHeader)
       .send({
         name: 'Refined Platform Notes',
         description: 'Refined notes about platform engineering',
