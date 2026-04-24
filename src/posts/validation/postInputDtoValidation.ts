@@ -9,6 +9,7 @@ export const postInputDtoValidation = (
   if (
     !data.title ||
     (data.title && typeof data.title !== 'string') ||
+    (data.title && data.title.trim().length < 1) ||
     (data.title && data.title.trim().length > 30)
   ) {
     errors.push({ field: 'title', message: 'Invalid post title' });
@@ -17,6 +18,7 @@ export const postInputDtoValidation = (
   if (
     !data.shortDescription ||
     (data.shortDescription && typeof data.shortDescription !== 'string') ||
+    (data.shortDescription && data.shortDescription.trim().length < 1) ||
     (data.shortDescription && data.shortDescription.trim().length > 100)
   ) {
     errors.push({
@@ -27,6 +29,7 @@ export const postInputDtoValidation = (
   if (
     !data.content ||
     (data.content && typeof data.content !== 'string') ||
+    (data.content && data.content.trim().length < 1) ||
     (data.content && data.content.trim().length > 1000)
   ) {
     errors.push({ field: 'content', message: 'Invalid post content' });

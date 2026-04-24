@@ -12,6 +12,7 @@ export const blogInputDtoValidation = (
   if (
     !data.name ||
     (data.name && typeof data.name !== 'string') ||
+    (data.name && data.name.trim().length < 1) ||
     (data.name && data.name.trim().length > 15)
   ) {
     errors.push({ field: 'name', message: 'Invalid blog name' });
@@ -20,6 +21,7 @@ export const blogInputDtoValidation = (
   if (
     !data.description ||
     (data.description && typeof data.description !== 'string') ||
+    (data.description && data.description.trim().length < 1) ||
     (data.description && data.description.trim().length > 500)
   ) {
     errors.push({ field: 'description', message: 'Invalid blog description' });
@@ -28,6 +30,7 @@ export const blogInputDtoValidation = (
   if (
     !data.websiteUrl ||
     (data.websiteUrl && typeof data.websiteUrl !== 'string') ||
+    (data.websiteUrl && data.websiteUrl.trim().length < 1) ||
     (data.websiteUrl && data.websiteUrl.trim().length > 100) ||
     (data.websiteUrl &&
       typeof data.websiteUrl === 'string' &&

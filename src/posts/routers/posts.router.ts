@@ -23,9 +23,9 @@ postsRouter
 
   .put(
     '/:id',
+    superAdminGuardMiddleware,
     PostHasValidFIeldsMiddleware,
     DocumentExistGuardMiddleware,
-    superAdminGuardMiddleware,
     updatePostHandler,
   )
 

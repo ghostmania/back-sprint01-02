@@ -337,8 +337,8 @@ describe('Posts API', () => {
     );
   });
 
-  it('should return 400 for invalid update payload before auth and existence checks; PUT /posts/:id', async () => {
-    const response = await request(app)
+  it('should return 401 for update without admin authorization before validation and existence checks; PUT /posts/:id', async () => {
+    await request(app)
       .put('/posts/999')
       .send({
         title: '',
@@ -346,28 +346,7 @@ describe('Posts API', () => {
         content: false,
         blogId: null,
       })
-      .expect(HttpStatus.BadRequest);
-
-    expect(response.body.errorsMessages).toEqual(
-      expect.arrayContaining([
-        {
-          field: 'title',
-          message: expect.any(String),
-        },
-        {
-          field: 'shortDescription',
-          message: expect.any(String),
-        },
-        {
-          field: 'content',
-          message: expect.any(String),
-        },
-        {
-          field: 'blogId',
-          message: expect.any(String),
-        },
-      ]),
-    );
+      .expect(HttpStatus.Unauthorized);
   });
 
   it('should return 404 when trying to update non-existing post; PUT /posts/:id', async () => {

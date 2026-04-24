@@ -22,8 +22,8 @@ blogsRouter
 
   .put(
     '/:id',
-    BlogHasValidFIeldsMiddleware,
     superAdminGuardMiddleware,
+    BlogHasValidFIeldsMiddleware,
     updateBlogHandler,
   )
 
